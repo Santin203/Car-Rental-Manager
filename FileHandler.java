@@ -3,7 +3,7 @@ import java.util.List;
 
 public class FileHandler {
     public static void saveToFile(String filename, List<ICar> cars) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
             for (ICar car : cars) {
                 writer.write(car.getPlate() + "," + car.getType() + "," + car.getMileage());
                 writer.newLine();
@@ -14,7 +14,17 @@ public class FileHandler {
     }
 
     public static void loadFromFile(String filename, ICarLot carLot) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+        File file = new File(filename);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");

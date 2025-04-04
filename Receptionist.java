@@ -1,4 +1,7 @@
 public class Receptionist {
+    /*
+     * Generate an static method to process the command line arguments and perform the actions
+     */
     public static void processCommands(String[] args) {
         if (args.length == 0) {
             System.out.println("Usage: java Main --lot-name=<name> [commands]");
