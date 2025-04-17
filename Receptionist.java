@@ -1,3 +1,5 @@
+import java.io.File;
+
 public class Receptionist {
     /*
      * Generate an static method to process the command line arguments and perform the actions
@@ -38,6 +40,24 @@ public class Receptionist {
                 manager.removeCar(plate);
             }
         }
+    }
+
+    public static void getCurrentLots() {
+        // Check for any ..._lot.txt files in the folder
+        File folder = new File(".");
+        File[] lotFiles = folder.listFiles((dir, name) -> name.endsWith("_lot.txt"));
+
+        if (lotFiles != null) {
+            for (File lotFile : lotFiles) {
+                loadCarsFromLotFile(lotFile.getName());
+            }
+        }
+    }
+
+    public static void loadCarsFromLotFile(String lotFilename) {
+        ICarLot carLot = new CarLot(lotFilename);
+        FileHandler.loadFromFile(lotFilename, carLot);
+        FileHandler.saveLicensePlates("licensePlates.txt", carLot.getCars(), lotFilename);
     }
 }
 

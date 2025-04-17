@@ -1,0 +1,10 @@
+UBE-944,false,example_lot.txt
+KHL-487,false,example_lot.txt
+BLH-545,false,example_lot.txt
+BFK-364,false,example_lot.txt
+AVF-255,false,example_lot.txt
+VTC-276,false,example_lot.txt
+NXE-601,false,example_lot.txt
+PHQ-084,false,example_lot.txt
+AWP-273,false,example_lot.txt
+EVT-313,false,example_lot.txt

@@ -1,5 +1,3 @@
-import java.util.List;
-
 public class LotManager implements ILotManager {
     private String lotFilename;
     private ICarLot carLot;
@@ -16,13 +14,18 @@ public class LotManager implements ILotManager {
             carLot.addCar(newCar);
             System.out.println("Added: " + newCar.getPlate() + " (" + type + ")");
         }
-        FileHandler.saveToFile(lotFilename, carLot.getCars());
+        FileHandler.saveCarsToFile(lotFilename, carLot.getCars());
+        FileHandler.saveLicensePlates("licensePlates.txt", carLot.getCars(), lotFilename);
     }
-
+    
     public void removeCar(String plate) {
         carLot.removeCar(plate);
         System.out.println("Removed: " + plate);
-        FileHandler.saveToFile(lotFilename, carLot.getCars());
+        FileHandler.saveCarsToFile(lotFilename, carLot.getCars());
+        FileHandler.saveLicensePlates("licensePlates.txt", carLot.getCars(), lotFilename);
+
+        // Remove the license plate from licensePlates.txt if it is not in use
+        FileHandler.removeLicensePlate("licensePlates.txt", plate);
     }
 }
 

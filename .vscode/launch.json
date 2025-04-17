@@ -25,7 +25,15 @@
             "request": "launch",
             "mainClass": "Main",
             "projectName": "Car-Rental-Manager_1cd9b6f2",
-            "args": "--lot-name=exampleLot --add-sedan=5 --add-suv=3 --add-van=2 --remove-vehicle=ABC123"
+            "args": "--lot-name=example2_lot --add-sedan=5 --add-suv=3 --add-van=2 --remove-vehicle=ABC-123"
+        },
+        {
+            "type": "java",
+            "name": "Debug Remove",
+            "request": "launch",
+            "mainClass": "Main",
+            "projectName": "Car-Rental-Manager_1cd9b6f2",
+            "args": "--lot-name=example2_lot --remove-vehicle=WZN-184"
         }
     ]
 }
