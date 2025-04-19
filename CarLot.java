@@ -21,5 +21,16 @@ public class CarLot implements ICarLot {
     public List<ICar> getCars() {
         return cars;
     }
+
+    public ICar removeCarByType(String location, String type) {
+        for (ICar car : cars) {
+            if (car.getType().equalsIgnoreCase(type)) {
+                cars.remove(car);
+                FileHandler.saveShopCarsToFile(location, getCars());
+                return car;
+            }
+        }
+        return null;
+    }
 }
 

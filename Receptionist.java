@@ -1,4 +1,6 @@
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 public class Receptionist {
     /*
@@ -6,10 +8,20 @@ public class Receptionist {
      */
     public static void processCommands(String[] args) {
         if (args.length == 0) {
-            System.out.println("Usage: java Main --lot-name=<name> [commands]");
+            System.out.println("Usage: java Main [--lot-name | --location] ...");
             return;
         }
 
+        if (Arrays.stream(args).anyMatch(arg -> arg.startsWith("--lot-name="))) {
+            processLotManagerArgs(args);
+        } else if (Arrays.stream(args).anyMatch(arg -> arg.startsWith("--location="))) {
+            processShopArgs(args);
+        } else {
+            System.out.println("Error: Missing required flags (--lot-name or --location)");
+        }
+    }
+
+    private static void processLotManagerArgs(String[] args) {
         String lotName = null;
         ILotManager manager = null;
 
@@ -42,8 +54,36 @@ public class Receptionist {
         }
     }
 
+    private static void processShopArgs(String[] args) {
+        String location = null;
+        int spaces = 10;
+        List<String> lots = List.of();
+
+        for (String arg : args) {
+            if (arg.startsWith("--location=")) {
+                location = arg.split("=")[1];
+            } else if (arg.startsWith("--spaces-available=")) {
+                spaces = Integer.parseInt(arg.split("=")[1]);
+            } else if (arg.startsWith("--lots=")) {
+                String[] lotNames = arg.split("=")[1].split(",");
+                lots = Arrays.asList(lotNames);
+            }
+        }
+
+        if (location == null) {
+            System.out.println("Error: --location is required for rental shop initialization.");
+            return;
+        }
+
+        RentalShop shop = new RentalShop(location, spaces);
+        ShopManager manager = new ShopManager(shop, lots);
+        manager.loadShop();
+
+        System.out.println("Shop initialized at " + location);
+        manager.runLoop();
+    }
+
     public static void getCurrentLots() {
-        // Check for any ..._lot.txt files in the folder
         File folder = new File(".");
         File[] lotFiles = folder.listFiles((dir, name) -> name.endsWith("_lot.txt"));
 
@@ -60,4 +100,3 @@ public class Receptionist {
         FileHandler.saveLicensePlates("licensePlates.txt", carLot.getCars(), lotFilename);
     }
 }
-
