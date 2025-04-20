@@ -92,7 +92,7 @@ public class ShopManager {
         FileHandler.updateLicensePlateLocation("licensePlates.txt", car.getPlate(), "rented");
         System.out.println("Car " + car.getPlate() + " successfully rented.");
 
-        balanceShopCars();
+        System.out.println(balanceShopCars());
     }
 
     public void returnCar(String licensePlate, int kilometers) {
@@ -146,10 +146,10 @@ public class ShopManager {
         System.out.println("Discount applied: " + (discountApplied ? "Yes" : "No"));
         System.out.println("====================================");
 
-        balanceShopCars();
+        System.out.println(balanceShopCars());
     }
 
-    public void balanceShopCars(){
+    public String balanceShopCars(){
         // Check if the shop has fewer than 2 empty spaces
         if (!shop.hasAtLeastTwoEmptySpaces()) {
             // Select a car to move back to a lot
@@ -159,8 +159,7 @@ public class ShopManager {
             if (!allowedLots.isEmpty()) {
                 selectedLot = allowedLots.get(0);
             } else {
-                System.out.println("No allowed lots available");
-                return;
+                return "No allowed lots available";
             }
 
             // Load the selected lot
@@ -177,8 +176,7 @@ public class ShopManager {
 
             FileHandler.updateLicensePlateLocation("licensePlates.txt", carToMove.getPlate(), selectedLot);
 
-            // Print details to the command line
-            System.out.println("Car " + carToMove.getPlate() + " moved back to lot: " + selectedLot);
+            return "Car " + carToMove.getPlate() + " moved back to lot: " + selectedLot;
         }
 
         // Check if the shop has more than 2 empty spaces
@@ -201,20 +199,20 @@ public class ShopManager {
                     FileHandler.updateLicensePlateLocation("licensePlates.txt", carToMove.getPlate(), shop.getLocation());
 
                     // Print details to the command line
-                    System.out.println("Car " + carToMove.getPlate() + " moved to shop from lot: " + lotName);
-                    return; // Exit after successfully moving a car
+                    return "Car " + carToMove.getPlate() + " moved to shop from lot: " + lotName;
                 } else {
-                    System.out.println("No cars available in lot: " + lotName);
+                    return "No cars available in lot: " + lotName;
                 }
             }
 
             // If no cars were found in any lot
-            System.out.println("No cars available in any allowed lot.");
+            return "No cars available in any allowed lot.";
         }
+        return "";
     }
 
     public void listShop() {
-        balanceShopCars();
+        System.out.println(balanceShopCars());
         System.out.println("===================================");
         System.out.println("          Shop summary");
         System.out.println("===================================");
@@ -251,6 +249,10 @@ public class ShopManager {
                                " | " + transaction.getAmount() +
                                "  | " + (transaction.isDiscountApplied() ? "Yes" : "No"));
         }
+    }
+
+    public List<String> getAllowedLots() {
+        return allowedLots;
     }
 
     public void runLoop() {

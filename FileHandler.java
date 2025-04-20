@@ -63,7 +63,7 @@ public class FileHandler {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
             for (ICar car : cars) {
                 if (!writtenPlates.contains(car.getPlate())) { // Avoid duplicates
-                    writer.write(car.getPlate() + "," + false + "," + lotFilename);
+                    writer.write(car.getPlate() + "," + lotFilename);
                     writer.newLine();
                     writtenPlates.add(car.getPlate()); // Mark as written
                 }
@@ -174,7 +174,7 @@ public class FileHandler {
                 String[] parts = line.split(",");
                 if (parts[0].equals(plate)) {
                     // Update the location
-                    writer.write(parts[0] + "," + parts[1] + "," + newLocation);
+                    writer.write(parts[0] + "," + newLocation);
                 } else {
                     writer.write(line);
                 }

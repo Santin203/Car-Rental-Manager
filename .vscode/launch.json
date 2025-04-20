@@ -50,7 +50,24 @@
             "mainClass": "Main",
             "projectName": "Car-Rental-Manager_1cd9b6f2",
             "args": "--location=alajuela --spaces-available=10 --lots=example_lot,example2_lot"
+        },
+        {
+            "type": "java",
+            "name": "Debug CarRentalManagerUI",
+            "request": "launch",
+            "mainClass": "CarRentalManagerUI",
+            "projectName": "Car-Rental-Manager_1cd9b6f2",
+            "args": "--location=heredia --spaces-available=10 --lots=example_lot,example2_lot"
+        },
+        {
+            "type": "java",
+            "name": "Debug CarRentalManagerUI Alajuela",
+            "request": "launch",
+            "mainClass": "CarRentalManagerUI",
+            "projectName": "Car-Rental-Manager_1cd9b6f2",
+            "args": "--location=alajuela --spaces-available=10 --lots=example_lot,example2_lot"
         }
+
 
     ]
 }
