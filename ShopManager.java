@@ -34,6 +34,7 @@ public class ShopManager implements IShopManager {
                     FileHandler.loadFromFile(lotName + ".txt", carLot);
                     carLot.addCar(car);
                     FileHandler.saveCarsToFile(lotName + ".txt", carLot.getCars(), false);
+                    FileHandler.updateLicensePlateLocation("licensePlates.txt", car.getPlate(), lotName);
                 }
                 iterator.remove();
             }
