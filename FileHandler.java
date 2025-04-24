@@ -1,3 +1,6 @@
+/*
+ * Prompt: Create a skeleton class named FileHandler.java that will handle all file operations.
+ */
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -7,8 +10,13 @@ import java.util.List;
 import java.util.Set;
 
 public class FileHandler {
-    private static final Set<String> writtenPlates = new HashSet<>();
+    private static final Set<String> writtenPlates = new HashSet<>(); //
 
+    /*
+     * Prompt: Create a method to save the cars to a file. 
+     * The method should take the filename, the list of cars, and 
+     * a boolean indicating whether to append or overwrite as parameters.
+     */
     public static synchronized void saveCarsToFile(String filename, List<ICar> cars, boolean append) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, append))) {
             for (ICar car : cars) {
@@ -20,6 +28,11 @@ public class FileHandler {
         }
     }
 
+    /*
+     * Prompt: Create a method to load the cars from a file. 
+     * The method should take the filename and a car lot as parameters.
+     * It should create the file if it does not exist
+     */
     public static void loadFromFile(String filename, ICarLot carLot) {
         File file = new File(filename);
         if (!file.exists()) {
@@ -45,27 +58,25 @@ public class FileHandler {
     }
 
     public static void saveLicensePlates(String filename, List<ICar> cars, String lotFilename) {
-        // Load existing license plates from the file
         File file = new File(filename);
         if (file.exists()) {
             try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     String[] parts = line.split(",");
-                    writtenPlates.add(parts[0]); // Add existing plates to the set
+                    writtenPlates.add(parts[0]);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        // Append only new license plates to the file
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, true))) {
             for (ICar car : cars) {
-                if (!writtenPlates.contains(car.getPlate())) { // Avoid duplicates
+                if (!writtenPlates.contains(car.getPlate())) {
                     writer.write(car.getPlate() + "," + lotFilename);
                     writer.newLine();
-                    writtenPlates.add(car.getPlate()); // Mark as written
+                    writtenPlates.add(car.getPlate()); //
                 }
             }
         } catch (IOException e) {
@@ -73,6 +84,10 @@ public class FileHandler {
         }
     }
 
+    /*
+     * Prompt: Create a method to remove a license plate from the licensePlates.txt file.
+     * The method should take the filename and the license plate as parameters.
+     */
     public static void removeLicensePlate(String filename, String plate) {
         File file = new File(filename);
         File tempFile = new File("temp_" + filename);
@@ -117,7 +132,7 @@ public class FileHandler {
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(",");
                 ICar car = new Car(parts[0], parts[1]);
-                car.updateMileage(Integer.parseInt(parts[2]));
+                car.updateMileage(Integer.parseInt(parts[2])); //
                 cars.add(car);
             }
         } catch (IOException e) {
@@ -136,6 +151,9 @@ public class FileHandler {
         }
     }
 
+    /*
+     * Prompt: Create a method to get the discount applied status for a license plate from the rented_cars.txt file.
+     */
     public static Boolean getDiscountApplied(String licensePlate) {
         for (String line : FileHandler.readLinesFromFile("rented_cars.txt")) {
             String[] parts = line.split(",");
@@ -158,7 +176,7 @@ public class FileHandler {
     }
 
     /*
-     * Make a method to update the location of a license plate in the licensePlates.txt file.
+     * Prompt: Make a method to update the location of a license plate in the licensePlates.txt file.
      * The method should take the filename, the license plate, and the new location as parameters.
      */
     public static void updateLicensePlateLocation(String filename, String plate, String newLocation) {
@@ -189,6 +207,11 @@ public class FileHandler {
         }
     }
 
+    /*
+     * Prompt: Create a method to get the transaction summary from the transactions file.
+     * The method should return a list containing the total revenue and total discounts.
+     * It is saved in the first line of the file.
+     */
     public static List<Object> getTransactionSummary(String filename) {
         File file = new File(filename);
         if (!file.exists()) {
@@ -213,6 +236,11 @@ public class FileHandler {
         return List.of(0.0, 0.0); // Return default summary in case of an error
     }
 
+    /*
+     * Prompt: Create a method to save a transaction to the transactions file.
+     * The method should take the filename and the transaction as parameters.
+     * It should skip the first line (summary line) and append the transaction to the file.
+     */
     public static List<ITransaction> getTransactionsFromFile(String filename) {
         List<ITransaction> transactions = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
@@ -234,6 +262,11 @@ public class FileHandler {
         return transactions;
     }
 
+    /*
+     * Prompt: Create a method to save a transaction to the transactions file.
+     * The method should take the filename and the transaction as parameters.
+     * It should skip the first line (summary line) and append the transaction to the file.
+     */
     public static void saveTransactionToFile(String filename, ITransaction transaction) {
         File file = new File(filename);
         List<ITransaction> transactions = new ArrayList<>();

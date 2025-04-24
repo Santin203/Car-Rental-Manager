@@ -9,6 +9,10 @@ public class ShopManager implements IShopManager {
         this.allowedLots = allowedLots;
     }
 
+    /*
+     * Prompt: Load into the program the cars already in the shop file. 
+     * If there are no cars in the shop, load them from the allowed lots.
+     */
     public void loadShop() {
         // Load into the program the cars already in the shop file
         List<ICar> shopCars = FileHandler.getCarsFromFile(shop.getLocation() + "_shop.txt");
@@ -57,7 +61,6 @@ public class ShopManager implements IShopManager {
             }
         }
 
-        // Load transactions summary
         List<Object> transactionsSummary = FileHandler.getTransactionSummary(shop.getLocation() + "_transactions.txt");
         if (transactionsSummary != null) {
             double totalRevenue = (double) transactionsSummary.get(0);
@@ -66,7 +69,6 @@ public class ShopManager implements IShopManager {
             shop.setTotalDiscounts(totalDiscounts);
         }
 
-        // Load transactions from the shop's transaction file
         List<ITransaction> transactions = FileHandler.getTransactionsFromFile(shop.getLocation() + "_transactions.txt");
         if (transactions != null) {
             for (ITransaction transaction : transactions) {
@@ -120,14 +122,12 @@ public class ShopManager implements IShopManager {
             return;
         }
 
-        // Load rented cars from file
         List<ICar> rentedCars = FileHandler.getCarsFromFile("rented_cars.txt");
         if (rentedCars == null) {
             System.out.println("Error loading rented cars.");
             return;
         }
 
-        // Find the car to return
         ICar returningCar = null;
         for (ICar car : rentedCars) {
             if (car.getPlate().equals(licensePlate)) {
@@ -146,7 +146,6 @@ public class ShopManager implements IShopManager {
         rentedCars.remove(returningCar);
         FileHandler.saveCarsToFile("rented_cars.txt", rentedCars, false);
 
-        // Add the car back to the shop
         double amount = shop.returnCar(returningCar, kilometers, discountApplied);
         double discountedAmount = 0.0;
         if (discountApplied) {
@@ -157,8 +156,6 @@ public class ShopManager implements IShopManager {
 
         FileHandler.saveShopCarsToFile(shop.getLocation(), shop.getCars());
         FileHandler.updateLicensePlateLocation("licensePlates.txt", licensePlate, shop.getLocation());
-
-        // Save the transaction to the shop's transaction file
         FileHandler.saveTransactionToFile(shop.getLocation() + "_transactions.txt", transaction);
 
         System.out.println("====================================");
@@ -173,8 +170,7 @@ public class ShopManager implements IShopManager {
     public String balanceShopCars(){
         // Check if the shop has fewer than 2 empty spaces
         if (!shop.hasAtLeastTwoEmptySpaces()) {
-            // Select a car to move back to a lot
-            ICar carToMove = shop.getCars().get(0); // Example: Select the first car in the shop
+            ICar carToMove = shop.getCars().get(0); // Select the first car in the shop
             String selectedLot = null;
 
             if (!allowedLots.isEmpty()) {
@@ -183,18 +179,14 @@ public class ShopManager implements IShopManager {
                 return "No allowed lots available";
             }
 
-            // Load the selected lot
             ICarLot carLot = new CarLot(selectedLot);
             FileHandler.loadFromFile(selectedLot + ".txt", carLot);
 
-            // Move the car to the lot
             shop.getCars().remove(carToMove);
             carLot.addCar(carToMove);
 
-            // Save the updated lot and shop data
             FileHandler.saveCarsToFile(selectedLot + ".txt", carLot.getCars(), false);
             FileHandler.saveShopCarsToFile(shop.getLocation(), shop.getCars());
-
             FileHandler.updateLicensePlateLocation("licensePlates.txt", carToMove.getPlate(), selectedLot);
 
             return "Car " + carToMove.getPlate() + " moved back to lot: " + selectedLot + " to keep 2 available spaces. \n";
@@ -203,30 +195,25 @@ public class ShopManager implements IShopManager {
         // Check if the shop has more than 2 empty spaces
         if (shop.canFitAnotherCar()) {
             for (String lotName : allowedLots) {
-                // Load the current lot
+
                 ICarLot carLot = new CarLot(lotName);
                 FileHandler.loadFromFile(lotName + ".txt", carLot);
 
-                // Check if the lot has cars available
                 if (!carLot.getCars().isEmpty()) {
-                    // Move a car from the lot to the shop
                     ICar carToMove = carLot.getCars().get(0);
                     carLot.removeCar(carToMove.getPlate());
                     shop.addCar(carToMove);
 
-                    // Save the updated lot and shop data
                     FileHandler.saveCarsToFile(lotName + ".txt", carLot.getCars(), false);
                     FileHandler.saveShopCarsToFile(shop.getLocation(), shop.getCars());
                     FileHandler.updateLicensePlateLocation("licensePlates.txt", carToMove.getPlate(), shop.getLocation());
 
-                    // Print details to the command line
                     return "Car " + carToMove.getPlate() + " moved to shop from lot: " + lotName + " to maintain the shop full.\n";
                 } else {
                     return "No cars available in lot: " + lotName  + "\n";
                 }
             }
 
-            // If no cars were found in any lot
             return "No cars available in any allowed lot.";
         }
         return "";
@@ -268,7 +255,7 @@ public class ShopManager implements IShopManager {
         for (ITransaction transaction : shop.getTransactions()) {
             System.out.println(transaction.getCar().getPlate() +
                                " | " + transaction.getAmount() +
-                               "  | " + (transaction.isDiscountApplied() ? "Yes" : "No"));
+                               "  | " + (transaction.isDiscountApplied() ? "Yes" : "No")); //
         }
     }
 
@@ -276,6 +263,10 @@ public class ShopManager implements IShopManager {
         return allowedLots;
     }
 
+    /*
+     * Prompt: Make a simple command line interface to interact with the user.
+     * The interface should allow the user to rent a car, return a car, list the shop's cars,
+     */
     public void runLoop() {
         java.util.Scanner scanner = new java.util.Scanner(System.in);
         String command;
@@ -283,10 +274,12 @@ public class ShopManager implements IShopManager {
         System.out.println("Welcome to the Shop Manager!");
 
         while (true) {
+            System.out.println("");
             System.out.println("===================================");
             System.out.println("Available commands: rent, return, list, transactions, exit");
             System.out.print("Enter command: ");
             command = scanner.nextLine().trim().toLowerCase();
+            System.out.println("===================================");
 
             switch (command) {
                 case "rent":

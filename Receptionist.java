@@ -4,7 +4,10 @@ import java.util.List;
 
 public class Receptionist {
     /*
-     * Generate an static method to process the command line arguments and perform the actions
+     * Prompt: Generate an static method to process the command line arguments.
+     * Depending on the arguments, it should either initialize a RentalShop or a LotManager.
+     * For example, if the arguments contain "--lot-name", it should initialize a LotManager.
+     * if the arguments contain "--location", it should initialize a RentalShop.
      */
     public static void processCommands(String[] args) {
         if (args.length == 0) {
@@ -21,6 +24,11 @@ public class Receptionist {
         }
     }
 
+    /*
+     * Prompt: Generate a static method to process the command line arguments for LotManager.
+     * It should handle adding and removing cars from the lot based on the arguments provided.
+     * Provide the skeleton for later modifications
+     */
     private static void processLotManagerArgs(String[] args) {
         String lotName = null;
         ILotManager manager = null;
@@ -54,6 +62,11 @@ public class Receptionist {
         }
     }
 
+    /*
+     * Prompt: Generate a static method to process the command line arguments for RentalShop.
+     * It should handle adding and removing cars from the lot based on the arguments provided.
+     * Provide the skeleton for later modifications
+     */
     private static void processShopArgs(String[] args) {
         String location = null;
         int spaces = 10;
@@ -84,8 +97,8 @@ public class Receptionist {
     }
 
     public static void getCurrentLots() {
-        File folder = new File(".");
-        File[] lotFiles = folder.listFiles((dir, name) -> name.endsWith("_lot.txt"));
+        File folder = new File("."); //
+        File[] lotFiles = folder.listFiles((dir, name) -> name.endsWith("_lot.txt")); //
 
         if (lotFiles != null) {
             for (File lotFile : lotFiles) {

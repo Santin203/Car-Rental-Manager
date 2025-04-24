@@ -1,3 +1,8 @@
+/*
+ * Prompt: Create a class named LicensePlateGenerator that generates 
+ * unique and random license plates. They should have the following format:
+ * "ABC-123", where "ABC" are random uppercase letters and "123" are random digits.
+ */
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;

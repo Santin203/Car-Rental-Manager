@@ -1,3 +1,10 @@
+/*
+ * Prompt: Create a Java Swing-based UI for managing a car rental shop. 
+ * The UI should allow users to rent and return cars, view transactions, 
+ * and check the shop's status. Include tabs for each operation and ensure 
+ * the UI is user-friendly and visually appealing.
+*/
+
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
@@ -108,20 +115,19 @@ public class CarRentalManagerUI extends JFrame {
         tabbedPane.addTab("Shop Status", shopStatusPanel);
 
         add(tabbedPane);
-        
-        // Update rent car action to display messages in the text area
+
         rentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String type = rentTypeField.getText().trim();
-                rentMessagesArea.setText(""); // Clear previous messages
+                rentMessagesArea.setText("");
                 if (!type.isEmpty()) {
                     ICar rentedCar = shop.removeCarByType(type);
                     String source = "Shop";
                     boolean discountApplied = false;
 
                     if (rentedCar == null) {
-                        // Try to rent from lots if not available locally
+
                         for (String lotName : shopManager.getAllowedLots()) {
                             ICarLot carLot = new CarLot(lotName);
                             FileHandler.loadFromFile(lotName + ".txt", carLot);
@@ -169,13 +175,15 @@ public class CarRentalManagerUI extends JFrame {
             }
         });
         
-        // Update return car action to display messages in the text area
+        /*
+         * Prompt: Update return car action to display messages in the text area
+         */
         returnButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String plate = returnPlateField.getText().trim().toUpperCase();
                 String kmStr = returnKmField.getText().trim();
-                returnMessagesArea.setText(""); // Clear previous messages
+                returnMessagesArea.setText("");
                 int kilometers;
 
                 if (plate == null || plate.isEmpty()) {
@@ -205,7 +213,6 @@ public class CarRentalManagerUI extends JFrame {
                     return;
                 }
 
-                // Load rented cars from file
                 List<ICar> rentedCars = FileHandler.getCarsFromFile("rented_cars.txt");
                 if (rentedCars == null) {
                     returnMessagesArea.append("Error loading rented cars.\n");
@@ -218,7 +225,6 @@ public class CarRentalManagerUI extends JFrame {
                     return;
                 }
 
-                // Find the car to return
                 ICar returningCar = null;
                 for (ICar car : rentedCars) {
                     if (car.getPlate().equals(plate)) {
@@ -243,7 +249,6 @@ public class CarRentalManagerUI extends JFrame {
                 rentedCars.remove(returningCar);
                 FileHandler.saveCarsToFile("rented_cars.txt", rentedCars, false);
 
-                // Add the car back to the shop
                 double amount = shop.returnCar(returningCar, kilometers, discountApplied);
                 double discountedAmount = 0.0;
                 if (discountApplied) {
@@ -254,8 +259,6 @@ public class CarRentalManagerUI extends JFrame {
 
                 FileHandler.saveShopCarsToFile(shop.getLocation(), shop.getCars());
                 FileHandler.updateLicensePlateLocation("licensePlates.txt", plate, shop.getLocation());
-
-                // Save the transaction to the shop's transaction file
                 FileHandler.saveTransactionToFile(shop.getLocation() + "_transactions.txt", transaction);
 
                 String message = "Car Returned Successfully:\n" +
@@ -278,7 +281,6 @@ public class CarRentalManagerUI extends JFrame {
             }
         });
         
-        // Refresh transactions action
         refreshTransactions.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -293,7 +295,6 @@ public class CarRentalManagerUI extends JFrame {
                 }
                 transactionsTable.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
 
-                // Retrieve and display the summary line
                 List<Object> summary = FileHandler.getTransactionSummary(shop.getLocation() + "_transactions.txt");
                 double totalRevenue = (double) summary.get(0);
                 double totalDiscounts = (double) summary.get(1);
@@ -308,15 +309,14 @@ public class CarRentalManagerUI extends JFrame {
                 );
 
                 // Center the contents of each cell in the transactions table
-                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-                centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-                for (int i = 0; i < transactionsTable.getColumnModel().getColumnCount(); i++) {
-                    transactionsTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-                }
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer(); //
+                centerRenderer.setHorizontalAlignment(SwingConstants.CENTER); //
+                for (int i = 0; i < transactionsTable.getColumnModel().getColumnCount(); i++) { //
+                    transactionsTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer); //
+                } //
             }
         });
 
-        // Refresh shop status action
         refreshShopStatus.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -334,13 +334,12 @@ public class CarRentalManagerUI extends JFrame {
                 shopStatusTable.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
 
                 // Center the contents of each cell in the shop status table
-                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-                centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-                for (int i = 0; i < shopStatusTable.getColumnModel().getColumnCount(); i++) {
-                    shopStatusTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-                }
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer(); //
+                centerRenderer.setHorizontalAlignment(SwingConstants.CENTER); //
+                for (int i = 0; i < shopStatusTable.getColumnModel().getColumnCount(); i++) { //
+                    shopStatusTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer); //
+                } //
 
-                // Display additional shop status information
                 int emptySpaces = shop.availableSpaces();
                 int fullSpaces = shop.getCars().size();
                 double totalRevenue = shop.getTotalRevenue();
@@ -357,12 +356,10 @@ public class CarRentalManagerUI extends JFrame {
         });
     }
     
-    // Append text to the output area
     private void appendOutput(String text) {
         outputArea.append(text + "\n");
     }
-    
-    // Refresh and display current shop summary
+
     private void updateShopSummary() {
         StringBuilder sb = new StringBuilder();
         sb.append("Shop Summary:\n");
@@ -376,6 +373,10 @@ public class CarRentalManagerUI extends JFrame {
         appendOutput(sb.toString());
     }
     
+    /*
+     * Prompt: Make a main method to run this GUI, allowing the user to specify
+     * the shop location, maximum spaces, and allowed lots via command-line arguments.
+     */
     public static void main(String[] args) {
         String shopLocation = "default_location";
         int maxSpaces = 10; // Default value
