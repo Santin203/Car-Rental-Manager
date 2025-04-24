@@ -9,7 +9,7 @@ import java.util.Set;
 public class FileHandler {
     private static final Set<String> writtenPlates = new HashSet<>();
 
-    public static void saveCarsToFile(String filename, List<ICar> cars, boolean append) {
+    public static synchronized void saveCarsToFile(String filename, List<ICar> cars, boolean append) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, append))) {
             for (ICar car : cars) {
                 writer.write(car.getPlate() + "," + car.getType() + "," + car.getMileage());
@@ -98,7 +98,7 @@ public class FileHandler {
         }
     }
 
-    public static void saveShopCarsToFile(String location, List<ICar> cars) {
+    public static synchronized void saveShopCarsToFile(String location, List<ICar> cars) {
         String filename = location + "_shop.txt";
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             for (ICar car : cars) {
@@ -161,7 +161,6 @@ public class FileHandler {
      * Make a method to update the location of a license plate in the licensePlates.txt file.
      * The method should take the filename, the license plate, and the new location as parameters.
      */
-
     public static void updateLicensePlateLocation(String filename, String plate, String newLocation) {
         File file = new File(filename);
         File tempFile = new File("temp_" + filename);
@@ -189,5 +188,85 @@ public class FileHandler {
             System.err.println("Failed to update " + filename);
         }
     }
+
+    public static List<Object> getTransactionSummary(String filename) {
+        File file = new File(filename);
+        if (!file.exists()) {
+            System.out.println("Transactions file does not exist: " + filename);
+            return List.of(0.0, 0.0); // Return default summary if file doesn't exist
+        }
+    
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+            String line = reader.readLine(); // Read the first line (summary line)
+            if (line != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 2) {
+                    double totalRevenue = Double.parseDouble(parts[0]);
+                    double totalDiscounts = Double.parseDouble(parts[1]);
+                    return List.of(totalRevenue, totalDiscounts);
+                }
+            }
+        } catch (IOException | NumberFormatException e) {
+            e.printStackTrace();
+        }
+    
+        return List.of(0.0, 0.0); // Return default summary in case of an error
+    }
+
+    public static List<ITransaction> getTransactionsFromFile(String filename) {
+        List<ITransaction> transactions = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            boolean isFirstLine = true;
+            while ((line = reader.readLine()) != null) {
+                if (isFirstLine) {
+                    isFirstLine = false; // Skip the summary line
+                    continue;
+                }
+                String[] parts = line.split(",");
+                ICar car = new Car(parts[0], parts[1]);
+                ITransaction transaction = new Transaction(Double.parseDouble(parts[2]), Boolean.parseBoolean(parts[3]), car, Double.parseDouble(parts[4]));
+                transactions.add(transaction);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return transactions;
+    }
+
+    public static void saveTransactionToFile(String filename, ITransaction transaction) {
+        File file = new File(filename);
+        List<ITransaction> transactions = new ArrayList<>();
+    
+        // Load existing transactions if the file exists
+        if (file.exists()) {
+            transactions = getTransactionsFromFile(filename);
+        }
+    
+        // Add the new transaction to the list
+        transactions.add(transaction);
+    
+        // Write the summary line and all transactions to the file
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename, false))) {
+            double totalRevenue = transactions.stream().mapToDouble(ITransaction::getAmount).sum();
+            double totalDiscounts = transactions.stream()
+                                                .filter(ITransaction::isDiscountApplied)
+                                                .mapToDouble(ITransaction::getDiscountedAmount)
+                                                .sum();
+    
+            // Write the summary line
+            writer.write(totalRevenue + "," + totalDiscounts);
+            writer.newLine();
+    
+            // Write each transaction
+            for (ITransaction t : transactions) {
+                writer.write(t.getCar().getPlate() + "," + t.getCar().getType() + "," + t.getAmount() + "," + t.isDiscountApplied() + "," + t.getDiscountedAmount());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
 

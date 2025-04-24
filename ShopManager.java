@@ -1,6 +1,6 @@
 import java.util.List;
 
-public class ShopManager {
+public class ShopManager implements IShopManager {
     private RentalShop shop;
     private List<String> allowedLots;
 
@@ -43,9 +43,6 @@ public class ShopManager {
             ICarLot carLot = new CarLot(lotName);
             FileHandler.loadFromFile(lotName + ".txt", carLot);
 
-            /*
-             * Fix
-             */
             java.util.Iterator<ICar> iterator = carLot.getCars().iterator();
             while (iterator.hasNext()) {
                 ICar car = iterator.next();
@@ -56,6 +53,23 @@ public class ShopManager {
                 iterator.remove();
                 FileHandler.saveCarsToFile(lotName + ".txt", carLot.getCars(), false);
                 FileHandler.updateLicensePlateLocation("licensePlates.txt", car.getPlate(), shop.getLocation());
+            }
+        }
+
+        // Load transactions summary
+        List<Object> transactionsSummary = FileHandler.getTransactionSummary(shop.getLocation() + "_transactions.txt");
+        if (transactionsSummary != null) {
+            double totalRevenue = (double) transactionsSummary.get(0);
+            double totalDiscounts = (double) transactionsSummary.get(1);
+            shop.setTotalRevenue(totalRevenue);
+            shop.setTotalDiscounts(totalDiscounts);
+        }
+
+        // Load transactions from the shop's transaction file
+        List<ITransaction> transactions = FileHandler.getTransactionsFromFile(shop.getLocation() + "_transactions.txt");
+        if (transactions != null) {
+            for (ITransaction transaction : transactions) {
+                shop.addTransaction(transaction);
             }
         }
     }
@@ -127,18 +141,24 @@ public class ShopManager {
         }
 
         boolean discountApplied = FileHandler.getDiscountApplied(licensePlate);
-        
 
         rentedCars.remove(returningCar);
         FileHandler.saveCarsToFile("rented_cars.txt", rentedCars, false);
 
         // Add the car back to the shop
         double amount = shop.returnCar(returningCar, kilometers, discountApplied);
-        ITransaction transaction = new Transaction(amount, discountApplied, returningCar);
+        double discountedAmount = 0.0;
+        if (discountApplied) {
+            discountedAmount = kilometers * 0.1;
+        }
+        ITransaction transaction = new Transaction(amount, discountApplied, returningCar, discountedAmount);
         shop.addTransaction(transaction);
 
         FileHandler.saveShopCarsToFile(shop.getLocation(), shop.getCars());
         FileHandler.updateLicensePlateLocation("licensePlates.txt", licensePlate, shop.getLocation());
+
+        // Save the transaction to the shop's transaction file
+        FileHandler.saveTransactionToFile(shop.getLocation() + "_transactions.txt", transaction);
 
         System.out.println("====================================");
         System.out.println("Car with license plate " + licensePlate + " successfully returned.");
@@ -176,7 +196,7 @@ public class ShopManager {
 
             FileHandler.updateLicensePlateLocation("licensePlates.txt", carToMove.getPlate(), selectedLot);
 
-            return "Car " + carToMove.getPlate() + " moved back to lot: " + selectedLot;
+            return "Car " + carToMove.getPlate() + " moved back to lot: " + selectedLot + " to keep 2 available spaces. \n";
         }
 
         // Check if the shop has more than 2 empty spaces
@@ -199,9 +219,9 @@ public class ShopManager {
                     FileHandler.updateLicensePlateLocation("licensePlates.txt", carToMove.getPlate(), shop.getLocation());
 
                     // Print details to the command line
-                    return "Car " + carToMove.getPlate() + " moved to shop from lot: " + lotName;
+                    return "Car " + carToMove.getPlate() + " moved to shop from lot: " + lotName + " to maintain the shop full.\n";
                 } else {
-                    return "No cars available in lot: " + lotName;
+                    return "No cars available in lot: " + lotName  + "\n";
                 }
             }
 

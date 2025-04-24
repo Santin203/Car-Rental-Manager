@@ -44,7 +44,7 @@ public class CarRentalManagerUI extends JFrame {
         rentPanel.add(rentButton);
 
         // Add a text area below the Rent Car button to display messages
-        JTextArea rentMessagesArea = new JTextArea(5, 30);
+        JTextArea rentMessagesArea = new JTextArea(5, 50);
         rentMessagesArea.setEditable(false);
         JScrollPane rentMessagesScrollPane = new JScrollPane(rentMessagesArea);
         rentPanel.add(rentMessagesScrollPane);
@@ -65,7 +65,7 @@ public class CarRentalManagerUI extends JFrame {
         returnPanel.add(returnButton);
 
         // Add a text area below the Return Car button to display messages
-        JTextArea returnMessagesArea = new JTextArea(5, 30);
+        JTextArea returnMessagesArea = new JTextArea(5, 50);
         returnMessagesArea.setEditable(false);
         JScrollPane returnMessagesScrollPane = new JScrollPane(returnMessagesArea);
         returnPanel.add(returnMessagesScrollPane);
@@ -131,7 +131,7 @@ public class CarRentalManagerUI extends JFrame {
                                 source = lotName;
                                 discountApplied = true;
                                 FileHandler.saveCarsToFile(lotName + ".txt", carLot.getCars(), false);
-                                rentMessagesArea.append("Car " + rentedCar.getPlate() + " moved to shop from lot: " + lotName + "\n");
+                                rentMessagesArea.append("Car " + rentedCar.getPlate() + " moved to shop from lot: " + lotName + " to be rented\n");
                                 break;
                             }
                         }
@@ -151,7 +151,7 @@ public class CarRentalManagerUI extends JFrame {
                             JOptionPane.INFORMATION_MESSAGE
                         );
                         appendOutput("Rent operation performed for type: " + type);
-                        returnMessagesArea.append(shopManager.balanceShopCars());
+                        rentMessagesArea.append(shopManager.balanceShopCars());
                         updateShopSummary();
                     } else {
                         rentMessagesArea.append("No cars of type '" + type + "' are available in stock or lots.\n");
@@ -245,11 +245,18 @@ public class CarRentalManagerUI extends JFrame {
 
                 // Add the car back to the shop
                 double amount = shop.returnCar(returningCar, kilometers, discountApplied);
-                ITransaction transaction = new Transaction(amount, discountApplied, returningCar);
+                double discountedAmount = 0.0;
+                if (discountApplied) {
+                    discountedAmount = kilometers * 0.1;
+                }
+                ITransaction transaction = new Transaction(amount, discountApplied, returningCar, discountedAmount);
                 shop.addTransaction(transaction);
 
                 FileHandler.saveShopCarsToFile(shop.getLocation(), shop.getCars());
                 FileHandler.updateLicensePlateLocation("licensePlates.txt", plate, shop.getLocation());
+
+                // Save the transaction to the shop's transaction file
+                FileHandler.saveTransactionToFile(shop.getLocation() + "_transactions.txt", transaction);
 
                 String message = "Car Returned Successfully:\n" +
                                  "License Plate: " + returningCar.getPlate() + "\n" +
@@ -285,7 +292,21 @@ public class CarRentalManagerUI extends JFrame {
                     data[i][2] = transaction.isDiscountApplied() ? "Yes" : "No";
                 }
                 transactionsTable.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
-                
+
+                // Retrieve and display the summary line
+                List<Object> summary = FileHandler.getTransactionSummary(shop.getLocation() + "_transactions.txt");
+                double totalRevenue = (double) summary.get(0);
+                double totalDiscounts = (double) summary.get(1);
+
+                JOptionPane.showMessageDialog(
+                    CarRentalManagerUI.this,
+                    "Total Revenue: $" + totalRevenue + "\n" +
+                    "Total Discounts: $" + totalDiscounts + "\n" +
+                    "Total Transactions: " + transactions.size(),
+                    "Transactions Summary",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+
                 // Center the contents of each cell in the transactions table
                 DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
                 centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
@@ -318,6 +339,20 @@ public class CarRentalManagerUI extends JFrame {
                 for (int i = 0; i < shopStatusTable.getColumnModel().getColumnCount(); i++) {
                     shopStatusTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
                 }
+
+                // Display additional shop status information
+                int emptySpaces = shop.availableSpaces();
+                int fullSpaces = shop.getCars().size();
+                double totalRevenue = shop.getTotalRevenue();
+
+                JOptionPane.showMessageDialog(
+                    CarRentalManagerUI.this,
+                    "Empty Spaces: " + emptySpaces + "\n" +
+                    "Full Spaces: " + fullSpaces + "\n" +
+                    "Total Revenue: $" + totalRevenue,
+                    "Shop Status Summary",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
             }
         });
     }

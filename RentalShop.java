@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class RentalShop {
+public class RentalShop implements IRentalShop {
     private String location;
     private int maxSpaces;
     private List<ICar> cars;
@@ -91,6 +91,12 @@ public class RentalShop {
 
     public void addTransaction(ITransaction transaction) {
         transactions.add(transaction);
+    }
+    public void setTotalRevenue(double totalRevenue) {
+        this.totalRevenue = totalRevenue;
+    }
+    public void setTotalDiscounts(double totalDiscounts) {
+        this.totalDiscounts = totalDiscounts;
     }
 }
 

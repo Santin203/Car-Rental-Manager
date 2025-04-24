@@ -1,0 +1,10 @@
+770.0,20.0
+VYS-926,Sedan,100.0,false,0.0
+NFY-562,Sedan,100.0,false,0.0
+NJL-308,Sedan,100.0,false,0.0
+XAU-596,Sedan,100.0,false,0.0
+EXT-615,Sedan,100.0,false,0.0
+MTB-191,Sedan,90.0,true,10.0
+DGL-018,SUV,90.0,true,10.0
+ITS-950,SUV,90.0,false,0.0
+GJH-448,SUV,0.0,false,0.0
