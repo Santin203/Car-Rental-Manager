@@ -14,8 +14,14 @@ public class CarLot implements ICarLot {
         cars.add(car);
     }
 
-    public void removeCar(String plate) {
-        cars.removeIf(car -> car.getPlate().equals(plate));
+    public boolean removeCar(String plate) {
+        for (ICar car : cars) {
+            if (car.getPlate().equalsIgnoreCase(plate)) {
+                cars.remove(car);
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<ICar> getCars() {

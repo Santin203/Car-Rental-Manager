@@ -33,7 +33,7 @@
             "request": "launch",
             "mainClass": "Main",
             "projectName": "Car-Rental-Manager_1cd9b6f2",
-            "args": "--lot-name=example2_lot --remove-vehicle=WZN-184"
+            "args": "--lot-name=example_lot --remove-vehicle=FXY-331"
         },
         {
             "type": "java",

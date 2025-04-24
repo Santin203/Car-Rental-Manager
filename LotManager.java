@@ -21,8 +21,11 @@ public class LotManager implements ILotManager {
     }
     
     public void removeCar(String plate) {
-        carLot.removeCar(plate);
-        System.out.println("Removed: " + plate);
+        if (carLot.removeCar(plate)) {
+            System.out.println("Removed: " + plate + " from " + lotName);
+        } else {
+            System.out.println("Car with plate " + plate + " not found in " + lotName);
+        }
         FileHandler.saveCarsToFile(lotFilename, carLot.getCars(), false);
         FileHandler.saveLicensePlates("licensePlates.txt", carLot.getCars(), lotName);
         FileHandler.removeLicensePlate("licensePlates.txt", plate);
