@@ -1,4 +1,3 @@
-OAQ-219,Sedan,0
-VYS-926,Sedan,100
-NFY-562,Sedan,100
-NJL-308,Sedan,100
+ZVP-722,Van,100
+VJO-679,Sedan,0
+WER-117,Van,200
