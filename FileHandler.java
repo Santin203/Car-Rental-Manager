@@ -1,6 +1,3 @@
-/*
- * Prompt: Create a skeleton class named FileHandler.java that will handle all file operations.
- */
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
