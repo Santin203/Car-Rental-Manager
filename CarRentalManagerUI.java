@@ -366,7 +366,7 @@ public class CarRentalManagerUI extends JFrame {
     private void updateShopSummary() {
         StringBuilder sb = new StringBuilder();
         sb.append("Shop Summary:\n");
-        sb.append("Total Cars: " + shop.getCars().size() + "\n");
+        sb.append("Full Spaces: " + shop.getCars().size() + "\n");
         sb.append("Available Spaces: " + shop.availableSpaces() + "\n");
         sb.append("Cars details:\n");
         for (ICar car : shop.getCars()) {

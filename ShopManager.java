@@ -236,7 +236,7 @@ public class ShopManager implements IShopManager {
         System.out.println("===================================");
         System.out.println("          Shop summary");
         System.out.println("===================================");
-        System.out.println("Total cars: " + shop.getCars().size());
+        System.out.println("Full Spaces: " + shop.getCars().size());
         System.out.println("Empty spaces: " + shop.availableSpaces());
         System.out.println("Total earned: $" + shop.getTotalRevenue());
         System.out.println("===================================");
