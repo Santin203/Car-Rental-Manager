@@ -5,11 +5,30 @@
  * the UI is user-friendly and visually appealing.
 */
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.EventQueue;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.*;
+
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 
 public class CarRentalManagerUI extends JFrame {
@@ -113,8 +132,145 @@ public class CarRentalManagerUI extends JFrame {
         JButton refreshShopStatus = new JButton("Refresh Shop Status");
         shopStatusPanel.add(refreshShopStatus, BorderLayout.SOUTH);
         tabbedPane.addTab("Shop Status", shopStatusPanel);
+        
+        // Add a new tab for Lot Management
+        JPanel lotManagementPanel = new JPanel();
+        lotManagementPanel.setLayout(new BoxLayout(lotManagementPanel, BoxLayout.Y_AXIS));
+        
+        // Initialize lot section
+        JPanel initLotPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JTextField lotNameField = new JTextField(15);
+        lotNameField.setToolTipText("Enter lot name (e.g., new_lot)");
+        JButton initLotButton = new JButton("Initialize Lot");
+        initLotPanel.add(new JLabel("Lot Name:"));
+        initLotPanel.add(lotNameField);
+        initLotPanel.add(initLotButton);
+        
+        // Add car section
+        JPanel addCarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JComboBox<String> carTypeCombo = new JComboBox<>(new String[]{"Sedan", "SUV", "Van"});
+        JSpinner countSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 50, 1));
+        countSpinner.setToolTipText("Select number of cars to add");
+        JTextField addToLotField = new JTextField(15);
+        addToLotField.setToolTipText("Enter lot name to add cars to");
+        JButton addCarsButton = new JButton("Add Cars");
+        addCarPanel.add(new JLabel("Car Type:"));
+        addCarPanel.add(carTypeCombo);
+        addCarPanel.add(new JLabel("Count:"));
+        addCarPanel.add(countSpinner);
+        addCarPanel.add(new JLabel("To Lot:"));
+        addCarPanel.add(addToLotField);
+        addCarPanel.add(addCarsButton);
+        
+        // Remove car section
+        JPanel removeCarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JTextField plateField = new JTextField(10);
+        plateField.setToolTipText("Enter license plate to remove");
+        JTextField removeFromLotField = new JTextField(15);
+        removeFromLotField.setToolTipText("Enter lot name to remove car from");
+        JButton removeCarButton = new JButton("Remove Car");
+        removeCarPanel.add(new JLabel("License Plate:"));
+        removeCarPanel.add(plateField);
+        removeCarPanel.add(new JLabel("From Lot:"));
+        removeCarPanel.add(removeFromLotField);
+        removeCarPanel.add(removeCarButton);
+        
+        // Results area for lot management operations
+        JTextArea lotManagementResults = new JTextArea(10, 50);
+        lotManagementResults.setEditable(false);
+        JScrollPane lotResultsScrollPane = new JScrollPane(lotManagementResults);
+        
+        // Add all the sections to the lot management panel
+        lotManagementPanel.add(initLotPanel);
+        lotManagementPanel.add(addCarPanel);
+        lotManagementPanel.add(removeCarPanel);
+        lotManagementPanel.add(lotResultsScrollPane);
+        
+        tabbedPane.addTab("Lot Management", lotManagementPanel);
 
         add(tabbedPane);
+        
+        // Add action listeners for lot management buttons
+        initLotButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String lotName = lotNameField.getText().trim();
+                if (lotName.isEmpty()) {
+                    lotManagementResults.setText("Please enter a lot name.");
+                    return;
+                }
+                
+                // Create the lot file if it doesn't exist
+                java.io.File lotFile = new java.io.File(lotName + ".txt");
+                try {
+                    if (lotFile.createNewFile()) {
+                        lotManagementResults.setText("Lot '" + lotName + "' initialized successfully.");
+                    } else {
+                        lotManagementResults.setText("Lot '" + lotName + "' already exists.");
+                    }
+                } catch (java.io.IOException ex) {
+                    lotManagementResults.setText("Error creating lot: " + ex.getMessage());
+                }
+            }
+        });
+        
+        addCarsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String lotName = addToLotField.getText().trim();
+                String carType = (String) carTypeCombo.getSelectedItem();
+                int count = (int) countSpinner.getValue();
+                
+                if (lotName.isEmpty()) {
+                    lotManagementResults.setText("Please enter a lot name.");
+                    return;
+                }
+                
+                // Check if the lot exists
+                java.io.File lotFile = new java.io.File(lotName + ".txt");
+                if (!lotFile.exists()) {
+                    lotManagementResults.setText("Lot '" + lotName + "' does not exist. Please initialize it first.");
+                    return;
+                }
+                
+                // Create a LotManager and add cars
+                ILotManager lotManager = new LotManager(lotName);
+                lotManager.addCars(carType, count);
+                
+                lotManagementResults.setText("Added " + count + " " + carType + "(s) to lot '" + lotName + "'.");
+            }
+        });
+        
+        removeCarButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String lotName = removeFromLotField.getText().trim();
+                String plate = plateField.getText().trim().toUpperCase();
+                
+                if (lotName.isEmpty()) {
+                    lotManagementResults.setText("Please enter a lot name.");
+                    return;
+                }
+                
+                if (plate.isEmpty()) {
+                    lotManagementResults.setText("Please enter a license plate.");
+                    return;
+                }
+                
+                // Check if the lot exists
+                java.io.File lotFile = new java.io.File(lotName + ".txt");
+                if (!lotFile.exists()) {
+                    lotManagementResults.setText("Lot '" + lotName + "' does not exist.");
+                    return;
+                }
+                
+                // Create a LotManager and remove the car
+                ILotManager lotManager = new LotManager(lotName);
+                lotManager.removeCar(plate);
+                
+                lotManagementResults.setText("Attempted to remove car with plate '" + plate + "' from lot '" + lotName + "'.");
+            }
+        });
 
         rentButton.addActionListener(new ActionListener() {
             @Override
