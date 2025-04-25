@@ -1,0 +1,20 @@
+1) Initialize a rental shop
+Java Main --location=heredia --spaces-available=10 --lots=example_lot,example2_lot
+
+2) Start an already exiting shop with the same configuration
+Java Main --location=heredia --spaces-available=10 --lots=example_lot,example2_lot
+
+3) Start an already exiting shop with less spaces available than before
+Java Main --location=heredia --spaces-available=5 --lots=example_lot,example2_lot
+
+4) Start an already exiting shop with more spaces available than before
+Java Main --location=heredia --spaces-available=15 --lots=example_lot,example2_lot
+
+5) Start an already exiting shop with no available lots
+Java Main --location=heredia --spaces-available=10
+
+6) Initialize a shop with no available lots
+Java Main --location=heredia --spaces-available=10
+
+7) Remaining testing done through videos to show consistency of the files when renting, 
+return, multiple open shops...

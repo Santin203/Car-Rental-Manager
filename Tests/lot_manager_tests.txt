@@ -1,0 +1,33 @@
+1) Remove a car from a lot
+Java Main --lot-name=example_lot --remove-vehicle=ZVP-722
+
+2) Add 15 SUVs to a lot
+Java Main --lot-name=example_lot --add-suv=15
+
+3) Add 20 Sedans to a lot
+Java Main --lot-name=example_lot --add-sedan=20
+
+4) Add 5 Vans to a lot
+Java Main --lot-name=example_lot --add-van=5
+
+5) Remove a non-existent car from a lot
+Java Main --lot-name=example_lot --remove-vehicle=ABC-123
+
+6) Add 10 cars of mixed types to a new lot
+Java Main --lot-name=new_lot --add-sedan=4 --add-suv=3 --add-van=3
+
+7) Add 50 Sedans to a lot
+Java Main --lot-name=example_lot --add-sedan=50
+
+8) Add 30 SUVs and 20 Vans to a lot
+Java Main --lot-name=example_lot --add-suv=30 --add-van=20
+
+9) Attempt to remove a car from an empty lot
+Java Main --lot-name=empty_lot --remove-vehicle=XYZ-999
+
+10) Attempt to remove a car from a non-existent lot
+Java Main --lot-name=no_lot --remove-vehicle=XYZ-999
+
+11) Initialize a lot with 10 cars
+Java Main --lot-name=example_lot --add-sedan=5 --add-suv=3 --add-van=2
+

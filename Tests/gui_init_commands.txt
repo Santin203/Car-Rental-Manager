@@ -1,0 +1,11 @@
+java CarRentalManagerUI --location=heredia --spaces-available=10 --lots=example_lot,example2_lot
+
+java CarRentalManagerUI --location=alajuela --spaces-available=10 --lots=example_lot,example2_lot
+
+java CarRentalManagerUI --location=cartago --spaces-available=10 --lots=example_lot,example2_lot
+
+java CarRentalManagerUI --location=puntarenas --spaces-available=10 --lots=example_lot,example2_lot
+
+java CarRentalManagerUI --location=limon --spaces-available=10 --lots=example_lot,example2_lot
+
+java CarRentalManagerUI --location=guanacaste --spaces-available=10 --lots=example_lot,example2_lot
