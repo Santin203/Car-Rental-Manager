@@ -201,7 +201,7 @@ public class CarRentalManagerUI extends JFrame {
                 }
                 
                 // Create the lot file if it doesn't exist
-                java.io.File lotFile = new java.io.File(lotName + ".txt");
+                java.io.File lotFile = new java.io.File(lotName + "_lot.txt");
                 try {
                     if (lotFile.createNewFile()) {
                         lotManagementResults.setText("Lot '" + lotName + "' initialized successfully.");
