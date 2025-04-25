@@ -172,6 +172,31 @@ public class FileHandler {
         }
     }
 
+    public static synchronized void removeRentedCarFromFile(String filename, ICar car) {
+        File file = new File(filename);
+        File tempFile = new File("temp_" + filename);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(file));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (!parts[0].equals(car.getPlate())) {
+                    writer.write(line);
+                    writer.newLine();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Replace the original file with the updated file
+        if (!file.delete() || !tempFile.renameTo(file)) {
+            System.err.println("Failed to update " + filename);
+        }
+    }
+
     /*
      * Prompt: Make a method to update the location of a license plate in the licensePlates.txt file.
      * The method should take the filename, the license plate, and the new location as parameters.

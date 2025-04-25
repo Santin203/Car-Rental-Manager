@@ -144,7 +144,7 @@ public class ShopManager implements IShopManager {
         boolean discountApplied = FileHandler.getDiscountApplied(licensePlate);
 
         rentedCars.remove(returningCar);
-        FileHandler.saveCarsToFile("rented_cars.txt", rentedCars, false);
+        FileHandler.removeRentedCarFromFile("rented_cars.txt", returningCar);
 
         double amount = shop.returnCar(returningCar, kilometers, discountApplied);
         double discountedAmount = 0.0;

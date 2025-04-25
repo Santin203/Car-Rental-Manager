@@ -247,7 +247,7 @@ public class CarRentalManagerUI extends JFrame {
                 boolean discountApplied = FileHandler.getDiscountApplied(plate);
 
                 rentedCars.remove(returningCar);
-                FileHandler.saveCarsToFile("rented_cars.txt", rentedCars, false);
+                FileHandler.removeRentedCarFromFile("rented_cars.txt", returningCar);
 
                 double amount = shop.returnCar(returningCar, kilometers, discountApplied);
                 double discountedAmount = 0.0;
