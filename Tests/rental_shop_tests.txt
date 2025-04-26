@@ -4,7 +4,7 @@ Java Main --location=heredia --spaces-available=10 --lots=example_lot,example2_l
 2) Start an already exiting shop with the same configuration
 Java Main --location=heredia --spaces-available=10 --lots=example_lot,example2_lot
 
-3) Start an already exiting shop with less spaces available than before
+3) Start an already exiting shop with different configuration than before
 Java Main --location=heredia --spaces-available=5 --lots=example_lot,example2_lot
 
 4) Start an already exiting shop with more spaces available than before
