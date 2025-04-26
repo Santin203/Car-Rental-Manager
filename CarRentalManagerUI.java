@@ -160,8 +160,7 @@ public class CarRentalManagerUI extends JFrame {
         addCarPanel.add(new JLabel("To Lot:"));
         addCarPanel.add(addToLotField);
         addCarPanel.add(addCarsButton);
-        
-        // Remove car section
+
         JPanel removeCarPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JTextField plateField = new JTextField(10);
         plateField.setToolTipText("Enter license plate to remove");
@@ -174,7 +173,6 @@ public class CarRentalManagerUI extends JFrame {
         removeCarPanel.add(removeFromLotField);
         removeCarPanel.add(removeCarButton);
         
-        // Add lot display section
         JPanel viewLotPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JComboBox<String> lotSelectCombo = new JComboBox<>();
         JButton refreshLotsButton = new JButton("Refresh Lots");
@@ -184,17 +182,14 @@ public class CarRentalManagerUI extends JFrame {
         viewLotPanel.add(refreshLotsButton);
         viewLotPanel.add(viewLotButton);
         
-        // Add a table to display cars in the selected lot
         JTable lotCarsTable = new JTable();
         JScrollPane lotCarsScrollPane = new JScrollPane(lotCarsTable);
         lotCarsScrollPane.setPreferredSize(new java.awt.Dimension(500, 200));
         
-        // Results area for lot management operations
         JTextArea lotManagementResults = new JTextArea(5, 50);
         lotManagementResults.setEditable(false);
         JScrollPane lotResultsScrollPane = new JScrollPane(lotManagementResults);
-        
-        // Add all the sections to the lot management panel
+
         lotManagementPanel.add(initLotPanel);
         lotManagementPanel.add(addCarPanel);
         lotManagementPanel.add(removeCarPanel);
@@ -206,7 +201,6 @@ public class CarRentalManagerUI extends JFrame {
 
         add(tabbedPane);
         
-        // Function to populate the lot dropdown
         refreshLotsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -267,7 +261,7 @@ public class CarRentalManagerUI extends JFrame {
         initLotButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String lotName = lotNameField.getText().trim() + "_lot";
+                String lotName = lotNameField.getText().trim() + "_lot.txt";
                 if (lotName.isEmpty()) {
                     lotManagementResults.setText("Please enter a lot name.");
                     return;
