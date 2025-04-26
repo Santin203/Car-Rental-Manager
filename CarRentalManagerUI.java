@@ -174,8 +174,23 @@ public class CarRentalManagerUI extends JFrame {
         removeCarPanel.add(removeFromLotField);
         removeCarPanel.add(removeCarButton);
         
+        // Add lot display section
+        JPanel viewLotPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JComboBox<String> lotSelectCombo = new JComboBox<>();
+        JButton refreshLotsButton = new JButton("Refresh Lots");
+        JButton viewLotButton = new JButton("View Lot Cars");
+        viewLotPanel.add(new JLabel("Select Lot:"));
+        viewLotPanel.add(lotSelectCombo);
+        viewLotPanel.add(refreshLotsButton);
+        viewLotPanel.add(viewLotButton);
+        
+        // Add a table to display cars in the selected lot
+        JTable lotCarsTable = new JTable();
+        JScrollPane lotCarsScrollPane = new JScrollPane(lotCarsTable);
+        lotCarsScrollPane.setPreferredSize(new java.awt.Dimension(500, 200));
+        
         // Results area for lot management operations
-        JTextArea lotManagementResults = new JTextArea(10, 50);
+        JTextArea lotManagementResults = new JTextArea(5, 50);
         lotManagementResults.setEditable(false);
         JScrollPane lotResultsScrollPane = new JScrollPane(lotManagementResults);
         
@@ -183,11 +198,70 @@ public class CarRentalManagerUI extends JFrame {
         lotManagementPanel.add(initLotPanel);
         lotManagementPanel.add(addCarPanel);
         lotManagementPanel.add(removeCarPanel);
+        lotManagementPanel.add(viewLotPanel);
+        lotManagementPanel.add(lotCarsScrollPane);
         lotManagementPanel.add(lotResultsScrollPane);
         
         tabbedPane.addTab("Lot Management", lotManagementPanel);
 
         add(tabbedPane);
+        
+        // Function to populate the lot dropdown
+        refreshLotsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                lotSelectCombo.removeAllItems();
+                java.io.File folder = new java.io.File(".");
+                java.io.File[] lotFiles = folder.listFiles((dir, name) -> name.endsWith("_lot.txt"));
+                
+                if (lotFiles != null && lotFiles.length > 0) {
+                    for (java.io.File file : lotFiles) {
+                        String lotName = file.getName();
+                        lotSelectCombo.addItem(lotName);
+                    }
+                    lotManagementResults.setText("Found " + lotFiles.length + " lot(s).");
+                } else {
+                    lotManagementResults.setText("No lot files found.");
+                }
+            }
+        });
+        
+        // Function to display cars in the selected lot
+        viewLotButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedLot = (String) lotSelectCombo.getSelectedItem();
+                if (selectedLot == null || selectedLot.isEmpty()) {
+                    lotManagementResults.setText("Please select a lot first.");
+                    return;
+                }
+                
+                ICarLot carLot = new CarLot(selectedLot);
+                FileHandler.loadFromFile(selectedLot, carLot);
+                List<ICar> cars = carLot.getCars();
+                
+                String[] columnNames = {"Type", "License Plate", "Mileage"};
+                Object[][] data = new Object[cars.size()][3];
+                
+                for (int i = 0; i < cars.size(); i++) {
+                    ICar car = cars.get(i);
+                    data[i][0] = car.getType();
+                    data[i][1] = car.getPlate();
+                    data[i][2] = car.getMileage();
+                }
+                
+                lotCarsTable.setModel(new javax.swing.table.DefaultTableModel(data, columnNames));
+                
+                // Center the contents of each cell in the table
+                DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+                centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
+                for (int i = 0; i < lotCarsTable.getColumnModel().getColumnCount(); i++) {
+                    lotCarsTable.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+                }
+                
+                lotManagementResults.setText("Loaded " + cars.size() + " cars from lot: " + selectedLot);
+            }
+        });
         
         // Add action listeners for lot management buttons
         initLotButton.addActionListener(new ActionListener() {
