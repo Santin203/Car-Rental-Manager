@@ -556,9 +556,23 @@ public class CarRentalManagerUI extends JFrame {
             }
         }
 
-        if (allowedLots.isEmpty()) {
-            System.out.println("No lots specified. Exiting.");
-            return;
+        // Check if a shop configuration file exists for this location
+        if (FileHandler.shopConfigExists(shopLocation)) {
+            // If configuration exists, load it and ignore command line values
+            List<Object> config = FileHandler.loadShopConfig(shopLocation);
+            maxSpaces = (int) config.get(0);
+            allowedLots = (List<String>) config.get(1);
+            System.out.println("Loading existing shop configuration for " + shopLocation + ":");
+            System.out.println("- Spaces available: " + maxSpaces);
+            System.out.println("- Allowed lots: " + String.join(", ", allowedLots));
+        } else {
+            // If no configuration exists, create one with the command line values
+            if (allowedLots.isEmpty()) {
+                System.out.println("No lots specified. Exiting.");
+                return;
+            }
+            FileHandler.saveShopConfig(shopLocation, maxSpaces, allowedLots);
+            System.out.println("Created new shop configuration for " + shopLocation);
         }
 
         RentalShop shop = new RentalShop(shopLocation, maxSpaces);

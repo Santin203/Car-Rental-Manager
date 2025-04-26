@@ -88,6 +88,21 @@ public class Receptionist {
             return;
         }
 
+        // Check if a shop configuration file exists for this location
+        if (FileHandler.shopConfigExists(location)) {
+            // If configuration exists, load it and ignore command line values
+            List<Object> config = FileHandler.loadShopConfig(location);
+            spaces = (int) config.get(0);
+            lots = (List<String>) config.get(1);
+            System.out.println("Loading existing shop configuration for " + location + ":");
+            System.out.println("- Spaces available: " + spaces);
+            System.out.println("- Allowed lots: " + String.join(", ", lots));
+        } else {
+            // If no configuration exists, create one with the command line values
+            FileHandler.saveShopConfig(location, spaces, lots);
+            System.out.println("Created new shop configuration for " + location);
+        }
+
         RentalShop shop = new RentalShop(location, spaces);
         ShopManager manager = new ShopManager(shop, lots);
         manager.loadShop();

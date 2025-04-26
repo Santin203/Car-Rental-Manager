@@ -2,6 +2,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -227,6 +228,55 @@ public class FileHandler {
         if (!file.delete() || !tempFile.renameTo(file)) {
             System.err.println("Failed to update " + filename);
         }
+    }
+
+    public static void saveShopConfig(String location, int maxSpaces, List<String> allowedLots) {
+        String filename = location + "_config.txt";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write(String.valueOf(maxSpaces));
+            writer.newLine();
+            if (allowedLots != null && !allowedLots.isEmpty()) {
+                writer.write(String.join(",", allowedLots));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Checks if a shop configuration file exists.
+     * @param location The shop location
+     * @return true if the configuration file exists, false otherwise
+     */
+    public static boolean shopConfigExists(String location) {
+        String filename = location + "_config.txt";
+        return new File(filename).exists();
+    }
+
+    public static List<Object> loadShopConfig(String location) {
+        String filename = location + "_config.txt";
+        File file = new File(filename);
+        int maxSpaces = 10; // Default value
+        List<String> allowedLots = new ArrayList<>();
+        
+        if (file.exists()) {
+            try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                String spacesLine = reader.readLine();
+                if (spacesLine != null && !spacesLine.isEmpty()) {
+                    maxSpaces = Integer.parseInt(spacesLine);
+                }
+                
+                String lotsLine = reader.readLine();
+                if (lotsLine != null && !lotsLine.isEmpty()) {
+                    String[] lots = lotsLine.split(",");
+                    allowedLots.addAll(Arrays.asList(lots));
+                }
+            } catch (IOException | NumberFormatException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        return Arrays.asList(maxSpaces, allowedLots);
     }
 
     /*
