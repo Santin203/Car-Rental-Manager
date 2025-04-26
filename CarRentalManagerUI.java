@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -194,14 +193,14 @@ public class CarRentalManagerUI extends JFrame {
         initLotButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String lotName = lotNameField.getText().trim();
+                String lotName = lotNameField.getText().trim() + "_lot";
                 if (lotName.isEmpty()) {
                     lotManagementResults.setText("Please enter a lot name.");
                     return;
                 }
                 
                 // Create the lot file if it doesn't exist
-                java.io.File lotFile = new java.io.File(lotName + "_lot.txt");
+                java.io.File lotFile = new java.io.File(lotName);
                 try {
                     if (lotFile.createNewFile()) {
                         lotManagementResults.setText("Lot '" + lotName + "' initialized successfully.");
@@ -217,7 +216,7 @@ public class CarRentalManagerUI extends JFrame {
         addCarsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String lotName = addToLotField.getText().trim();
+                String lotName = addToLotField.getText().trim() + "_lot";
                 String carType = (String) carTypeCombo.getSelectedItem();
                 int count = (int) countSpinner.getValue();
                 
@@ -225,26 +224,18 @@ public class CarRentalManagerUI extends JFrame {
                     lotManagementResults.setText("Please enter a lot name.");
                     return;
                 }
-                
-                // Check if the lot exists
-                java.io.File lotFile = new java.io.File(lotName + ".txt");
-                if (!lotFile.exists()) {
-                    lotManagementResults.setText("Lot '" + lotName + "' does not exist. Please initialize it first.");
-                    return;
-                }
-                
-                // Create a LotManager and add cars
+
                 ILotManager lotManager = new LotManager(lotName);
                 lotManager.addCars(carType, count);
                 
-                lotManagementResults.setText("Added " + count + " " + carType + "(s) to lot '" + lotName + "'.");
+                lotManagementResults.setText("Added " + count + " " + carType + " to lot '" + lotName + "'.");
             }
         });
         
         removeCarButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String lotName = removeFromLotField.getText().trim();
+                String lotName = removeFromLotField.getText().trim() + "_lot";
                 String plate = plateField.getText().trim().toUpperCase();
                 
                 if (lotName.isEmpty()) {
@@ -257,14 +248,6 @@ public class CarRentalManagerUI extends JFrame {
                     return;
                 }
                 
-                // Check if the lot exists
-                java.io.File lotFile = new java.io.File(lotName + ".txt");
-                if (!lotFile.exists()) {
-                    lotManagementResults.setText("Lot '" + lotName + "' does not exist.");
-                    return;
-                }
-                
-                // Create a LotManager and remove the car
                 ILotManager lotManager = new LotManager(lotName);
                 lotManager.removeCar(plate);
                 
